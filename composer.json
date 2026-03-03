@@ -1,0 +1,17 @@
+{
+    "name": "literise/backend-api",
+    "description": "LiteRise Backend API",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "phpmailer/phpmailer": "^6.9",
+        "google/cloud-speech": "^1.15"
+    },
+    "autoload": {
+        "files": [
+            "src/db.php",
+            "src/auth.php",
+            "src/email.php"
+        ]
+    }
+}

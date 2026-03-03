@@ -1,0 +1,225 @@
+# LiteRise API Security Configuration
+
+ 
+
+# Disable directory browsing
+
+Options -Indexes
+
+ 
+
+# Protect .env file
+
+<Files ".env">
+
+    Order allow,deny
+
+    Deny from all
+
+</Files>
+
+ 
+
+# Protect .htaccess itself
+
+<Files ".htaccess">
+
+    Order allow,deny
+
+    Deny from all
+
+</Files>
+
+ 
+
+# Protect PHP configuration files
+
+<FilesMatch "^(config|db)\.php$">
+
+    Order allow,deny
+
+    Deny from all
+
+</FilesMatch>
+
+ 
+
+# Enable rewrite engine
+
+RewriteEngine On
+
+ 
+
+# Force HTTPS (uncomment in production)
+
+# RewriteCond %{HTTPS} off
+
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+ 
+
+# Block access to hidden files and directories
+
+RewriteCond %{SCRIPT_FILENAME} -d [OR]
+
+RewriteCond %{SCRIPT_FILENAME} -f
+
+RewriteRule "(^|/)\." - [F]
+
+ 
+
+# Set security headers
+
+<IfModule mod_headers.c>
+
+    # Prevent clickjacking
+
+    Header always set X-Frame-Options "DENY"
+
+ 
+
+    # Prevent MIME sniffing
+
+    Header always set X-Content-Type-Options "nosniff"
+
+ 
+
+    # Enable XSS protection
+
+    Header always set X-XSS-Protection "1; mode=block"
+
+ 
+
+    # Referrer policy
+
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+ 
+
+    # Remove PHP version
+
+    Header unset X-Powered-By
+
+ 
+
+    # CORS headers (customize as needed)
+
+    Header always set Access-Control-Allow-Origin "*"
+
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization"
+
+</IfModule>
+
+ 
+
+# Limit request methods
+
+<LimitExcept GET POST OPTIONS>
+
+    Order deny,allow
+
+    Deny from all
+
+</LimitExcept>
+
+ 
+
+# PHP settings
+
+<IfModule mod_php7.c>
+
+    # Hide PHP version
+
+    php_flag expose_php off
+
+ 
+
+    # Set memory limit
+
+    php_value memory_limit 128M
+
+ 
+
+    # Set max execution time
+
+    php_value max_execution_time 30
+
+ 
+
+    # Set upload limits
+
+    php_value upload_max_filesize 10M
+
+    php_value post_max_size 10M
+
+ 
+
+    # Display errors (disable in production)
+
+    php_flag display_errors off
+
+    php_flag display_startup_errors off
+
+ 
+
+    # Log errors
+
+    php_flag log_errors on
+
+    php_value error_log /path/to/php-errors.log
+
+</IfModule>
+
+ 
+
+# Disable file uploads in API directory (if not needed)
+
+# php_flag file_uploads off
+
+ 
+
+# Protect against common attacks
+
+<IfModule mod_rewrite.c>
+
+    # Block SQL injection attempts
+
+    RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+
+    RewriteRule .* - [F,L]
+
+</IfModule>
+
+ 
+
+# Compress output for better performance
+
+<IfModule mod_deflate.c>
+
+    AddOutputFilterByType DEFLATE application/json
+
+    AddOutputFilterByType DEFLATE text/plain
+
+    AddOutputFilterByType DEFLATE text/html
+
+</IfModule>
+
+ 
+
+# Cache control for API responses (no caching)
+
+<IfModule mod_headers.c>
+
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+
+    Header set Pragma "no-cache"
+
+    Header set Expires "Thu, 01 Jan 1970 00:00:00 GMT"
+
+</IfModule>

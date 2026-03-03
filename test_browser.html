@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LiteRise API Tester</title>
+
+    <style>
+
+        * {
+
+            margin: 0;
+
+            padding: 0;
+
+            box-sizing: border-box;
+
+        }
+
+ 
+
+        body {
+
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+            min-height: 100vh;
+
+            padding: 20px;
+
+        }
+
+ 
+
+        .container {
+
+            max-width: 1200px;
+
+            margin: 0 auto;
+
+        }
+
+ 
+
+        h1 {
+
+            color: white;
+
+            text-align: center;
+
+            margin-bottom: 30px;
+
+            font-size: 32px;
+
+        }
+
+ 
+
+        .test-section {
+
+            background: white;
+
+            border-radius: 12px;
+
+            padding: 25px;
+
+            margin-bottom: 20px;
+
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+        }
+
+ 
+
+        .test-section h2 {
+
+            color: #333;
+
+            margin-bottom: 15px;
+
+            font-size: 20px;
+
+            border-bottom: 2px solid #667eea;
+
+            padding-bottom: 10px;
+
+        }
+
+ 
+
+        .form-group {
+
+            margin-bottom: 15px;
+
+        }
+
+ 
+
+        label {
+
+            display: block;
+
+            margin-bottom: 5px;
+
+            color: #555;
+
+            font-weight: 600;
+
+        }
+
+ 
+
+        input, textarea {
+
+            width: 100%;
+
+            padding: 10px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 6px;
+
+            font-size: 14px;
+
+        }
+
+ 
+
+        textarea {
+
+            min-height: 120px;
+
+            font-family: 'Courier New', monospace;
+
+        }
+
+ 
+
+        button {
+
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+            color: white;
+
+            border: none;
+
+            padding: 12px 30px;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            font-size: 16px;
+
+            font-weight: 600;
+
+            transition: transform 0.2s;
+
+        }
+
+ 
+
+        button:hover {
+
+            transform: translateY(-2px);
+
+        }
+
+ 
+
+        button:disabled {
+
+            opacity: 0.6;
+
+            cursor: not-allowed;
+
+        }
+
+ 
+
+        .response {
+
+            margin-top: 15px;
+
+            padding: 15px;
+
+            border-radius: 6px;
+
+            font-family: 'Courier New', monospace;
+
+            font-size: 13px;
+
+            white-space: pre-wrap;
+
+            word-break: break-all;
+
+        }
+
+ 
+
+        .response.success {
+
+            background: #d4edda;
+
+            border: 1px solid #c3e6cb;
+
+            color: #155724;
+
+        }
+
+ 
+
+        .response.error {
+
+            background: #f8d7da;
+
+            border: 1px solid #f5c6cb;
+
+            color: #721c24;
+
+        }
+
+ 
+
+        .response.info {
+
+            background: #d1ecf1;
+
+            border: 1px solid #bee5eb;
+
+            color: #0c5460;
+
+        }
+
+ 
+
+        .grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+            gap: 20px;
+
+        }
+
+ 
+
+        .status-badge {
+
+            display: inline-block;
+
+            padding: 4px 12px;
+
+            border-radius: 12px;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            margin-left: 10px;
+
+        }
+
+ 
+
+        .status-badge.success {
+
+            background: #28a745;
+
+            color: white;
+
+        }
+
+ 
+
+        .status-badge.error {
+
+            background: #dc3545;
+
+            color: white;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🚀 LiteRise API Tester</h1>
+
+ 
+
+        <!-- Registration Test -->
+
+        <div class="test-section">
+
+            <h2>1. Registration API <span class="status-badge" id="registerStatus"></span></h2>
+
+            <div class="form-group">
+
+                <label>Nickname:</label>
+
+                <input type="text" id="regNickname" value="TestUser123" />
+
+            </div>
+
+            <div class="form-group">
+
+                <label>First Name:</label>
+
+                <input type="text" id="regFirstName" value="Test" />
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Last Name:</label>
+
+                <input type="text" id="regLastName" value="Student" />
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Email:</label>
+
+                <input type="email" id="regEmail" value="" />
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Password:</label>
+
+                <input type="password" id="regPassword" value="password123" />
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Grade Level:</label>
+
+                <input type="number" id="regGrade" value="1" min="1" max="12" />
+
+            </div>
+
+            <button onclick="testRegister()">Test Registration</button>
+
+            <div id="registerResponse"></div>
+
+        </div>
+
+ 
+
+        <!-- Login Test -->
+
+        <div class="test-section">
+
+            <h2>2. Login API <span class="status-badge" id="loginStatus"></span></h2>
+
+            <div class="form-group">
+
+                <label>Email:</label>
+
+                <input type="email" id="loginEmail" value="" />
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Password:</label>
+
+                <input type="password" id="loginPassword" value="password123" />
+
+            </div>
+
+            <button onclick="testLogin()">Test Login</button>
+
+            <div id="loginResponse"></div>
+
+        </div>
+
+ 
+
+        <!-- Forgot Password Test -->
+
+        <div class="test-section">
+
+            <h2>3. Forgot Password API <span class="status-badge" id="forgotStatus"></span></h2>
+
+            <div class="form-group">
+
+                <label>Email:</label>
+
+                <input type="email" id="forgotEmail" value="" />
+
+            </div>
+
+            <button onclick="testForgotPassword()">Request OTP</button>
+
+            <div id="forgotResponse"></div>
+
+        </div>
+
+ 
+
+        <!-- Verify OTP Test -->
+
+        <div class="test-section">
+
+            <h2>4. Verify OTP API <span class="status-badge" id="verifyStatus"></span></h2>
+
+            <div class="form-group">
+
+                <label>Email:</label>
+
+                <input type="email" id="verifyEmail" value="" />
+
+            </div>
+
+            <div class="form-group">
+
+                <label>OTP Code:</label>
+
+                <input type="text" id="verifyOTP" value="" maxlength="6" placeholder="123456" />
+
+            </div>
+
+            <button onclick="testVerifyOTP()">Verify OTP</button>
+
+            <div id="verifyResponse"></div>
+
+        </div>
+
+ 
+
+        <!-- Reset Password Test -->
+
+        <div class="test-section">
+
+            <h2>5. Reset Password API <span class="status-badge" id="resetStatus"></span></h2>
+
+            <div class="form-group">
+
+                <label>Email:</label>
+
+                <input type="email" id="resetEmail" value="" />
+
+            </div>
+
+            <div class="form-group">
+
+                <label>OTP Code:</label>
+
+                <input type="text" id="resetOTP" value="" maxlength="6" />
+
+            </div>
+
+            <div class="form-group">
+
+                <label>New Password:</label>
+
+                <input type="password" id="resetPassword" value="newpassword123" />
+
+            </div>
+
+            <button onclick="testResetPassword()">Reset Password</button>
+
+            <div id="resetResponse"></div>
+
+        </div>
+
+ 
+
+        <!-- Custom Request -->
+
+        <div class="test-section">
+
+            <h2>6. Custom Request</h2>
+
+            <div class="form-group">
+
+                <label>Endpoint:</label>
+
+                <input type="text" id="customEndpoint" value="register.php" placeholder="register.php" />
+
+            </div>
+
+            <div class="form-group">
+
+                <label>JSON Body:</label>
+
+                <textarea id="customBody">{
+
+  "nickname": "Test",
+
+  "first_name": "John",
+
+  "last_name": "Doe",
+
+  "email": "test@example.com",
+
+  "password": "password123",
+
+  "grade_level": "1"
+
+}</textarea>
+
+            </div>
+
+            <button onclick="testCustom()">Send Custom Request</button>
+
+            <div id="customResponse"></div>
+
+        </div>
+
+    </div>
+
+ 
+
+    <script>
+
+        // Generate unique email on page load
+
+        const timestamp = Date.now();
+
+        const uniqueEmail = `test_${timestamp}@example.com`;
+
+        document.getElementById('regEmail').value = uniqueEmail;
+
+        document.getElementById('loginEmail').value = uniqueEmail;
+
+        document.getElementById('forgotEmail').value = uniqueEmail;
+
+        document.getElementById('verifyEmail').value = uniqueEmail;
+
+        document.getElementById('resetEmail').value = uniqueEmail;
+
+ 
+
+        // API Base URL (auto-detect)
+
+        const API_BASE = window.location.origin + window.location.pathname.replace('test_browser.html', '');
+
+ 
+
+        function showResponse(elementId, statusId, data, isSuccess) {
+
+            const responseDiv = document.getElementById(elementId);
+
+            const statusBadge = document.getElementById(statusId);
+
+ 
+
+            responseDiv.className = 'response ' + (isSuccess ? 'success' : 'error');
+
+            responseDiv.innerHTML = JSON.stringify(data, null, 2);
+
+ 
+
+            if (statusBadge) {
+
+                statusBadge.className = 'status-badge ' + (isSuccess ? 'success' : 'error');
+
+                statusBadge.textContent = isSuccess ? 'PASSED' : 'FAILED';
+
+            }
+
+        }
+
+ 
+
+        function showError(elementId, statusId, error) {
+
+            const responseDiv = document.getElementById(elementId);
+
+            const statusBadge = document.getElementById(statusId);
+
+ 
+
+            responseDiv.className = 'response error';
+
+            responseDiv.textContent = 'Error: ' + error;
+
+ 
+
+            if (statusBadge) {
+
+                statusBadge.className = 'status-badge error';
+
+                statusBadge.textContent = 'ERROR';
+
+            }
+
+        }
+
+ 
+
+        async function makeRequest(endpoint, body) {
+
+            const url = API_BASE + endpoint;
+
+            console.log('Request to:', url);
+
+            console.log('Body:', body);
+
+ 
+
+            const response = await fetch(url, {
+
+                method: 'POST',
+
+                headers: {
+
+                    'Content-Type': 'application/json'
+
+                },
+
+                body: JSON.stringify(body)
+
+            });
+
+ 
+
+            const data = await response.json();
+
+            return { data, status: response.status };
+
+        }
+
+ 
+
+        async function testRegister() {
+
+            try {
+
+                const body = {
+
+                    nickname: document.getElementById('regNickname').value,
+
+                    first_name: document.getElementById('regFirstName').value,
+
+                    last_name: document.getElementById('regLastName').value,
+
+                    email: document.getElementById('regEmail').value,
+
+                    password: document.getElementById('regPassword').value,
+
+                    grade_level: document.getElementById('regGrade').value
+
+                };
+
+ 
+
+                const { data, status } = await makeRequest('register.php', body);
+
+                showResponse('registerResponse', 'registerStatus', data, data.success);
+
+            } catch (error) {
+
+                showError('registerResponse', 'registerStatus', error.message);
+
+            }
+
+        }
+
+ 
+
+        async function testLogin() {
+
+            try {
+
+                const body = {
+
+                    email: document.getElementById('loginEmail').value,
+
+                    password: document.getElementById('loginPassword').value
+
+                };
+
+ 
+
+                const { data, status } = await makeRequest('login.php', body);
+
+                showResponse('loginResponse', 'loginStatus', data, data.success);
+
+            } catch (error) {
+
+                showError('loginResponse', 'loginStatus', error.message);
+
+            }
+
+        }
+
+ 
+
+        async function testForgotPassword() {
+
+            try {
+
+                const body = {
+
+                    email: document.getElementById('forgotEmail').value
+
+                };
+
+ 
+
+                const { data, status } = await makeRequest('forgot_password.php', body);
+
+                showResponse('forgotResponse', 'forgotStatus', data, data.success);
+
+ 
+
+                // Auto-fill OTP if in debug mode
+
+                if (data.debug_otp) {
+
+                    document.getElementById('verifyOTP').value = data.debug_otp;
+
+                    document.getElementById('resetOTP').value = data.debug_otp;
+
+                }
+
+            } catch (error) {
+
+                showError('forgotResponse', 'forgotStatus', error.message);
+
+            }
+
+        }
+
+ 
+
+        async function testVerifyOTP() {
+
+            try {
+
+                const body = {
+
+                    email: document.getElementById('verifyEmail').value,
+
+                    otp_code: document.getElementById('verifyOTP').value
+
+                };
+
+ 
+
+                const { data, status } = await makeRequest('verify_otp.php', body);
+
+                showResponse('verifyResponse', 'verifyStatus', data, data.success && data.valid);
+
+            } catch (error) {
+
+                showError('verifyResponse', 'verifyStatus', error.message);
+
+            }
+
+        }
+
+ 
+
+        async function testResetPassword() {
+
+            try {
+
+                const body = {
+
+                    email: document.getElementById('resetEmail').value,
+
+                    otp_code: document.getElementById('resetOTP').value,
+
+                    new_password: document.getElementById('resetPassword').value
+
+                };
+
+ 
+
+                const { data, status } = await makeRequest('reset_password.php', body);
+
+                showResponse('resetResponse', 'resetStatus', data, data.success);
+
+            } catch (error) {
+
+                showError('resetResponse', 'resetStatus', error.message);
+
+            }
+
+        }
+
+ 
+
+        async function testCustom() {
+
+            try {
+
+                const endpoint = document.getElementById('customEndpoint').value;
+
+                const body = JSON.parse(document.getElementById('customBody').value);
+
+ 
+
+                const { data, status } = await makeRequest(endpoint, body);
+
+                showResponse('customResponse', null, data, data.success);
+
+            } catch (error) {
+
+                showError('customResponse', null, error.message);
+
+            }
+
+        }
+
+ 
+
+        console.log('API Base URL:', API_BASE);
+
+    </script>
+
+</body>
+
+</html>

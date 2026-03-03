@@ -1,0 +1,31 @@
+# Environment configuration
+.env
+
+# Logs
+*.log
+error.log
+php-errors.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Backup files
+*.bak
+*.backup
+
+# Google Cloud credentials
+google-cloud-credentials.json
