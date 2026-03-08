@@ -36,26 +36,27 @@ try {
         exit;
     }
     
-    // Get node content with corrected column names
+    // Get node content — prefer Lessons.LessonContent, fall back to Nodes.ContentJSON
     $stmt = $conn->prepare("
-        SELECT 
+        SELECT
             n.NodeID,
             n.NodeNumber,
             n.LessonTitle,
             n.LearningObjectives,
-            n.ContentJSON,
+            COALESCE(l.LessonContent, n.ContentJSON) AS ContentJSON,
             n.NodeType,
             n.Quarter,
             n.ModuleID,
             m.ModuleName
         FROM Nodes n
         JOIN Modules m ON n.ModuleID = m.ModuleID
+        LEFT JOIN Lessons l ON l.LessonID = n.NodeID
         WHERE n.NodeID = ?
     ");
-    
+
     $stmt->execute([$nodeId]);
     $node = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if (!$node) {
         http_response_code(404);
         echo json_encode([
@@ -64,10 +65,10 @@ try {
         ]);
         exit;
     }
-    
+
     // Get pacing strategy
     $pacing = getPacingStrategy($placementLevel);
-    
+
     // Generate adaptive content
     $content = generateAdaptiveContent($node['ContentJSON'], $placementLevel);
     
