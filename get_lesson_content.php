@@ -57,6 +57,28 @@ try {
     $stmt->execute([$nodeId]);
     $node = $stmt->fetch(PDO::FETCH_ASSOC);
 
+    // Fall back to SupplementalNodes if not found in core Nodes
+    if (!$node) {
+        $stmt = $conn->prepare("
+            SELECT
+                sn.SupplementalNodeID AS NodeID,
+                0 AS NodeNumber,
+                sn.Title AS LessonTitle,
+                '' AS LearningObjectives,
+                sn.ContentJSON,
+                sn.NodeType,
+                0 AS Quarter,
+                m.ModuleID,
+                m.ModuleName
+            FROM SupplementalNodes sn
+            JOIN Nodes afterNode ON sn.AfterNodeID = afterNode.NodeID
+            JOIN Modules m ON afterNode.ModuleID = m.ModuleID
+            WHERE sn.SupplementalNodeID = ?
+        ");
+        $stmt->execute([$nodeId]);
+        $node = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     if (!$node) {
         http_response_code(404);
         echo json_encode([

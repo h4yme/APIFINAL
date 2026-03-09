@@ -56,14 +56,52 @@ try {
         exit;
     }
     
-    // Check if progress exists
+    // Determine node type: core nodes live in Nodes (IDs 101-513); supplemental nodes
+    // live in SupplementalNodes with auto-incremented IDs that overlap the core range.
+    // Always check Nodes first — if found there it is a core node, never supplemental.
+    $stmtCore = $conn->prepare("SELECT COUNT(*) FROM Nodes WHERE NodeID = ?");
+    $stmtCore->execute([$nodeId]);
+    $isCoreNode = (int)$stmtCore->fetchColumn() > 0;
+
+    $isSupplemental = false;
+    if (!$isCoreNode) {
+        $stmtCheck = $conn->prepare("SELECT COUNT(*) FROM SupplementalNodes WHERE SupplementalNodeID = ?");
+        $stmtCheck->execute([$nodeId]);
+        $isSupplemental = (int)$stmtCheck->fetchColumn() > 0;
+    }
+
+    if ($isSupplemental) {
+        // For supplemental nodes, update StudentSupplementalProgress.IsCompleted when lesson phase completes
+        // (supplemental nodes don't have game/quiz phases — lesson completion = done)
+        if ($phase === 'lesson') {
+            $stmt = $conn->prepare("
+                UPDATE StudentSupplementalProgress
+                SET IsCompleted = 1, CompletedDate = GETDATE()
+                WHERE StudentID = ? AND SupplementalNodeID = ?
+            ");
+            $stmt->execute([$studentId, $nodeId]);
+
+            // Note: QuizCompleted for the parent core node is intentionally NOT set here.
+            // The Android client will auto-launch the quiz retake after intervention;
+            // submit_quiz.php will set QuizCompleted=1 when the student passes (score >= 70).
+        }
+        // game/quiz phases on supplemental nodes are no-ops
+        http_response_code(200);
+        echo json_encode([
+            'success' => true,
+            'message' => ucfirst($phase) . ' completed successfully'
+        ]);
+        exit;
+    }
+
+    // Core node — check if progress row exists
     $stmt = $conn->prepare("
         SELECT COUNT(*) FROM StudentNodeProgress
         WHERE StudentID = ? AND NodeID = ?
     ");
     $stmt->execute([$studentId, $nodeId]);
     $exists = $stmt->fetchColumn();
-    
+
     if (!$exists) {
         $stmt = $conn->prepare("
             INSERT INTO StudentNodeProgress (StudentID, NodeID, LessonCompleted, GameCompleted, QuizCompleted)
@@ -71,7 +109,7 @@ try {
         ");
         $stmt->execute([$studentId, $nodeId]);
     }
-    
+
     // Update phase
     $field = '';
     switch ($phase) {
@@ -85,14 +123,14 @@ try {
             $field = 'QuizCompleted';
             break;
     }
-    
+
     $stmt = $conn->prepare("
         UPDATE StudentNodeProgress
         SET $field = 1
         WHERE StudentID = ? AND NodeID = ?
     ");
     $stmt->execute([$studentId, $nodeId]);
-    
+
     http_response_code(200);
     echo json_encode([
         'success' => true,
@@ -104,14 +142,14 @@ try {
     echo json_encode([
         'success' => false,
         'message' => 'Database error',
-        'error' => (($_ENV['DEBUG_MODE'] ?? 'false') === 'true') ? $e->getMessage() : null
+        'error' => ((($_ENV['DEBUG_MODE'] ?? getenv('DEBUG_MODE')) ?? 'false') === 'true') ? $e->getMessage() : null
     ]);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => 'Server errors',
-        'error' => (($_ENV['DEBUG_MODE'] ?? 'false') === 'true') ? $e->getMessage() : null
+        'error' => ((($_ENV['DEBUG_MODE'] ?? getenv('DEBUG_MODE')) ?? 'false') === 'true') ? $e->getMessage() : null
     ]);
 }
 

@@ -149,7 +149,7 @@ try {
 
         $debugInfo = null;
 
-        if (($_ENV['DEBUG_MODE'] ?? 'false') === 'true') {
+        if ((($_ENV['DEBUG_MODE'] ?? getenv('DEBUG_MODE')) ?? 'false') === 'true') {
 
             $debugInfo = [
 
@@ -181,30 +181,46 @@ try {
 
     // Format response to match Android app expectations
 
-   $response = [
+    $response = [
+
         'success' => true,
+
         'StudentID' => (int)$student['StudentID'],
+
         'FullName' => $student['FirstName'] . ' ' . $student['LastName'],
+
         'FirstName' => $student['FirstName'],
+
         'LastName' => $student['LastName'],
+
+        'Nickname' => $student['Nickname'] ?? '',
+
         'email' => $student['Email'],
+
         'GradeLevel' => (int)$student['GradeLevel'],
+
         'Section' => $student['Section'] ?? '',
+
         'CurrentAbility' => (float)$student['CurrentAbility'],
-        'AbilityScore' => (float)$student['CurrentAbility'],
+
+        'AbilityScore' => (float)$student['CurrentAbility'], // Alias for Android
+
         'TotalXP' => (int)$student['TotalXP'],
-        'XP' => (int)$student['TotalXP'],
+
+        'XP' => (int)$student['TotalXP'], // Alias for Android
+
         'CurrentStreak' => (int)$student['CurrentStreak'],
+
         'LongestStreak' => (int)$student['LongestStreak'],
+
         'LastLogin' => $student['LastLogin'] ?? null,
+
         'PreAssessmentCompleted' => isset($student['PreAssessmentCompleted']) ? (bool)$student['PreAssessmentCompleted'] : false,
+
         'AssessmentStatus' => $student['AssessmentStatus'] ?? 'Not Started',
-        'Cat1_PhonicsWordStudy'        => (int)($student['Cat1_PhonicsWordStudy'] ?? 0),        // ← ADD
-        'Cat2_VocabularyWordKnowledge' => (int)($student['Cat2_VocabularyWordKnowledge'] ?? 0), // ← ADD
-        'Cat3_GrammarAwareness'        => (int)($student['Cat3_GrammarAwareness'] ?? 0),        // ← ADD
-        'Cat4_ComprehendingText'       => (int)($student['Cat4_ComprehendingText'] ?? 0),       // ← ADD
-        'Cat5_CreatingComposing'       => (int)($student['Cat5_CreatingComposing'] ?? 0),       // ← ADD
+
         'token' => $token
+
     ];
 
  

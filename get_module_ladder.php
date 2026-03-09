@@ -42,14 +42,19 @@ try {
     $stmt->execute([$studentId, $moduleId]);
     $nodes = $stmt->fetchAll();
     
-    // Get visible supplemental nodes
+    // Get visible supplemental nodes for this specific student
     $stmt = $conn->prepare("
-        SELECT * FROM SupplementalNodes 
-        WHERE AfterNodeID IN (SELECT NodeID FROM Nodes WHERE ModuleID = ?)
-        AND IsVisible = 1
+        SELECT sn.SupplementalNodeID, sn.AfterNodeID, sn.Title, sn.NodeType,
+               ssp.IsCompleted, ssp.TriggerReason
+        FROM SupplementalNodes sn
+        JOIN StudentSupplementalProgress ssp
+            ON sn.SupplementalNodeID = ssp.SupplementalNodeID
+        WHERE sn.AfterNodeID IN (SELECT NodeID FROM Nodes WHERE ModuleID = ?)
+          AND ssp.StudentID = ?
+          AND ssp.IsVisible = 1
     ");
-    $stmt->execute([$moduleId]);
-    $supplementalNodes = $stmt->fetchAll();
+    $stmt->execute([$moduleId, $studentId]);
+    $supplementalNodes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     sendResponse([
         'nodes' => $nodes,
