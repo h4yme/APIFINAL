@@ -219,6 +219,16 @@ try {
 
         'AssessmentStatus' => $student['AssessmentStatus'] ?? 'Not Started',
 
+        'Cat1_PhonicsWordStudy' => isset($student['Cat1_PhonicsWordStudy']) ? (int)$student['Cat1_PhonicsWordStudy'] : 0,
+
+        'Cat2_VocabularyWordKnowledge' => isset($student['Cat2_VocabularyWordKnowledge']) ? (int)$student['Cat2_VocabularyWordKnowledge'] : 0,
+
+        'Cat3_GrammarAwareness' => isset($student['Cat3_GrammarAwareness']) ? (int)$student['Cat3_GrammarAwareness'] : 0,
+
+        'Cat4_ComprehendingText' => isset($student['Cat4_ComprehendingText']) ? (int)$student['Cat4_ComprehendingText'] : 0,
+
+        'Cat5_CreatingComposing' => isset($student['Cat5_CreatingComposing']) ? (int)$student['Cat5_CreatingComposing'] : 0,
+
         'token' => $token
 
     ];

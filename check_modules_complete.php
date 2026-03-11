@@ -56,13 +56,28 @@ try {
     $allComplete = ($completedCount >= $totalCount && $totalCount > 0);
 
     // Check if post-assessment already done
+    // Primary: check PostAssessmentCompleted flag on Students table
+    // Fallback: check PlacementResults for a POST row
     $stmt = $conn->prepare("
-        SELECT COUNT(*)
-        FROM PlacementResults
-        WHERE StudentID = ? AND AssessmentType = 'POST'
+        SELECT COALESCE(PostAssessmentCompleted, 0)
+        FROM dbo.Students
+        WHERE StudentID = ?
     ");
     $stmt->execute([$studentId]);
-    $postAssessmentDone = (int)$stmt->fetchColumn() > 0;
+    $flag = $stmt->fetchColumn();
+
+    if ($flag === false) {
+        // Student row not found — fall back to PlacementResults
+        $stmt = $conn->prepare("
+            SELECT COUNT(*)
+            FROM PlacementResults
+            WHERE StudentID = ? AND AssessmentType = 'POST'
+        ");
+        $stmt->execute([$studentId]);
+        $postAssessmentDone = (int)$stmt->fetchColumn() > 0;
+    } else {
+        $postAssessmentDone = (bool)(int)$flag;
+    }
 
     $shouldTrigger = $allComplete && !$postAssessmentDone;
 
