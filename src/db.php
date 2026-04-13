@@ -75,8 +75,8 @@ if ($envFile) {
 }
 
 // DB config (NO insecure local defaults for production)
-$serverName      = envv('DB_SERVER',        'literise.database.windows.net');
-$database        = envv('DB_NAME',          'literisedb');
+$serverName      = envv('DB_SERVER',        'literisefinal.database.windows.net');
+$database        = envv('DB_NAME',          'LiteriseDB');
 $username        = envv('DB_USER',          'SAliterise');
 $password        = envv('DB_PASSWORD',      'p@ssw0rd');
 $debugMode       = strtolower((string)envv('DEBUG_MODE', 'false')) === 'true';
